@@ -16,8 +16,9 @@ show_help() {
     echo -e "  ${YELLOW}gitpak help${NC}               Show this help menu"
     echo -e "  ${YELLOW}gitpak i <repo_url>${NC}       Install a package from a Git repository"
     echo -e "  ${YELLOW}gitpak path add <package>${NC} Add package to PATH"
-    echo -e "  ${YELLOW}gitpak run <package>${NC}      Run package without adding to PATH"
+    echo -e "  ${YELLOW}gitpak run < package>${NC}      Run package without adding to PATH"
     echo -e "  ${YELLOW}gitpak project new <name>${NC} Create a new package project"
+    echo -e "  ${YELLOW}gitpak update${NC}             Update gitpak to the latest version"
 }
 
 install_package() {
@@ -100,11 +101,18 @@ EOL
     echo -e "${GREEN}Created new project: $project_name${NC}"
 }
 
+update_gitpak() {
+    echo -e "${YELLOW}Updating gitpak...${NC}"
+    curl -sL "https://raw.githubusercontent.com/I-FOX-Development/gitpak/refs/heads/main/update.sh" | bash
+    echo -e "${GREEN}gitpak has been updated!${NC}"
+}
+
 case "$1" in
     help) show_help ;;
     i) install_package "$2" ;;
     path) shift; add_to_path "$2" ;;
     run) shift; run_package "$1" "$@" ;;
     project) shift; [ "$1" == "new" ] && create_project "$2" ;;
+    update) update_gitpak ;;
     *) show_help ;;
 esac
