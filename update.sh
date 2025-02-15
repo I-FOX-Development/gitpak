@@ -8,6 +8,7 @@ echo "export PATH=\"$GITPAK_DIR:$PATH\"" >> ~/.bashrc
 echo "export PATH=\"$GITPAK_DIR:$PATH\"" >> ~/.zshrc
 source ~/.bashrc
 source ~/.zshrc
-ln -sf "$GITPAK_DIR/gitpak.sh" "$GITPAK_DIR/gitpak"
+rm $GITPAK_DIR/gitpak
+ln -sf $GITPAK_DIR/gitpak.sh $GITPAK_DIR/gitpak
 source ~/.bashrc
 echo "Gitpak updated successfully."
