@@ -112,19 +112,19 @@ search_package() {
     search_term="$1"
     echo -e "${YELLOW}Searching for '$search_term' in the public register...${NC}"
     
-    # Fetch the package list and search for the term
-    curl -sL "https://raw.githubusercontent.com/I-FOX-Development/gitpak/refs/heads/main/pak.json" | jq -r ".packages[] | select(.name | test(\"$search_term\")) | .name" > /tmp/gitpak_search_results.txt
+    # Fetch the package list
+    response=$(curl -sL "https://raw.githubusercontent.com/I-FOX-Development/gitpak/refs/heads/main/pak.json")
     
-    # Check if results were found
-    if [ -s /tmp/gitpak_search_results.txt ]; then
+    # Extract package names and check if any match the search term
+    matching_packages=$(echo "$response" | grep -o '"name": *"[^"]*"' | sed 's/"name": *"\([^"]*\)"/\1/' | grep -i "$search_term")
+    
+    # Check if we found any matches
+    if [ -n "$matching_packages" ]; then
         echo -e "${GREEN}Found the following packages matching '$search_term':${NC}"
-        cat /tmp/gitpak_search_results.txt
+        echo "$matching_packages"
     else
         echo -e "${RED}No packages found matching '$search_term'.${NC}"
     fi
-    
-    # Clean up
-    rm /tmp/gitpak_search_results.txt
 }
 
 case "$1" in
