@@ -16,7 +16,9 @@ show_help() {
     echo -e "  ${YELLOW}gitpak help${NC}               Show this help menu"
     echo -e "  ${YELLOW}gitpak i <repo_url>${NC}       Install a package from a Git repository"
     echo -e "  ${YELLOW}gitpak path add <package>${NC} Add package to PATH"
-    echo -e "  ${YELLOW}gitpak run < package>${NC}      Run package without adding to PATH"
+    echo -e "  ${YELLOW}gitpak path add all${NC}       Add all packages to PATH"
+    echo -e "  ${YELLOW}gitpak list${NC}               List all installed packages"
+    echo -e "  ${YELLOW}gitpak run <package>${NC}      Run package without adding to PATH"
     echo -e "  ${YELLOW}gitpak project new <name>${NC} Create a new package project"
     echo -e "  ${YELLOW}gitpak update${NC}             Update gitpak to the latest version"
     echo -e "  ${YELLOW}gitpak search <package>${NC}   Search for a package in the public register"
@@ -61,6 +63,32 @@ add_to_path() {
     source ~/.bashrc
     source ~/.zshrc
     echo -e "${GREEN}$package_name added to PATH${NC}"
+}
+
+add_all_to_path() {
+    for package_path in "$INSTALL_DIR"/*; do
+        if [ -d "$package_path" ]; then
+            package_name=$(basename "$package_path")
+            echo "export PATH=\"$package_path:$PATH\"" >> ~/.bashrc
+            echo "export PATH=\"$package_path:$PATH\"" >> ~/.zshrc
+            echo -e "${GREEN}$package_name added to PATH${NC}"
+        fi
+    done
+    source ~/.bashrc
+    source ~/.zshrc
+}
+
+list_installed_packages() {
+    if [ -d "$INSTALL_DIR" ] && [ "$(ls -A "$INSTALL_DIR")" ]; then
+        echo -e "${GREEN}Installed Packages:${NC}"
+        for package_path in "$INSTALL_DIR"/*; do
+            if [ -d "$package_path" ]; then
+                echo "  $(basename "$package_path")"
+            fi
+        done
+    else
+        echo -e "${RED}No packages installed.${NC}"
+    fi
 }
 
 run_package() {
@@ -130,7 +158,14 @@ search_package() {
 case "$1" in
     help) show_help ;;
     i) install_package "$2" ;;
-    path) shift; add_to_path "$2" ;;
+    path) shift; 
+        if [ "$1" == "add" ] && [ "$2" == "all" ]; then
+            add_all_to_path
+        else
+            add_to_path "$2"
+        fi
+        ;;
+    list) list_installed_packages ;;
     run) shift; run_package "$1" "$@" ;;
     project) shift; [ "$1" == "new" ] && create_project "$2" ;;
     update) update_gitpak ;;
