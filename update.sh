@@ -11,4 +11,3 @@ source ~/.zshrc
 rm $GITPAK_DIR/gitpak
 ln -sf $GITPAK_DIR/gitpak.sh $GITPAK_DIR/gitpak
 source ~/.bashrc
-echo "Gitpak updated successfully."
