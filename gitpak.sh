@@ -19,6 +19,7 @@ show_help() {
     echo -e "  ${YELLOW}gitpak run < package>${NC}      Run package without adding to PATH"
     echo -e "  ${YELLOW}gitpak project new <name>${NC} Create a new package project"
     echo -e "  ${YELLOW}gitpak update${NC}             Update gitpak to the latest version"
+    echo -e "  ${YELLOW}gitpak search <package>${NC}   Search for a package in the public register"
 }
 
 install_package() {
@@ -107,6 +108,25 @@ update_gitpak() {
     echo -e "${GREEN}gitpak has been updated!${NC}"
 }
 
+search_package() {
+    search_term="$1"
+    echo -e "${YELLOW}Searching for '$search_term' in the public register...${NC}"
+    
+    # Fetch the package list and search for the term
+    curl -sL "https://raw.githubusercontent.com/I-FOX-Development/gitpak/refs/heads/main/pak.json" | jq -r ".packages[] | select(.name | test(\"$search_term\")) | .name" > /tmp/gitpak_search_results.txt
+    
+    # Check if results were found
+    if [ -s /tmp/gitpak_search_results.txt ]; then
+        echo -e "${GREEN}Found the following packages matching '$search_term':${NC}"
+        cat /tmp/gitpak_search_results.txt
+    else
+        echo -e "${RED}No packages found matching '$search_term'.${NC}"
+    fi
+    
+    # Clean up
+    rm /tmp/gitpak_search_results.txt
+}
+
 case "$1" in
     help) show_help ;;
     i) install_package "$2" ;;
@@ -114,5 +134,6 @@ case "$1" in
     run) shift; run_package "$1" "$@" ;;
     project) shift; [ "$1" == "new" ] && create_project "$2" ;;
     update) update_gitpak ;;
+    search) search_package "$2" ;;
     *) show_help ;;
 esac
