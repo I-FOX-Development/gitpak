@@ -46,6 +46,9 @@ install_package() {
             echo -ne "\rDownloading: $bar $percent%"
         fi
     done
+
+    # Ensure progress reaches 100% before completing
+    echo -ne "\rDownloading: [${GREEN}$(printf '█%.0s' $(seq 1 20))${NC}] 100%\n"
     echo -e "\n${GREEN}Installed $package_name to $package_path${NC}"
     
     # Get the package name from info.json
