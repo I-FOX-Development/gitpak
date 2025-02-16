@@ -64,6 +64,24 @@ install_package() {
 
 uninstall_package() {
     package_name="$1"
+    
+    # Special check for uninstalling gitpak itself
+    if [ "$package_name" == "gitpak" ]; then
+        echo -e "${YELLOW}Are you sure you want to uninstall gitpak? This will remove the gitpak manager from your system. [y/n]${NC}"
+        read -r confirm
+        if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+            echo -e "${RED}Uninstallation cancelled.${NC}"
+            exit 0
+        fi
+    else
+        echo -e "${YELLOW}Are you sure you want to uninstall '$package_name'? [y/n]${NC}"
+        read -r confirm
+        if [[ ! "$confirm" =~ ^[Yy]$ ]]; then
+            echo -e "${RED}Uninstallation cancelled.${NC}"
+            exit 0
+        fi
+    fi
+
     package_path="$INSTALL_DIR/$package_name"
 
     # Check if the package exists
