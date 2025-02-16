@@ -22,7 +22,10 @@ show_help() {
     echo -e "  ${YELLOW}gitpak project new <name>${NC} Create a new package project"
     echo -e "  ${YELLOW}gitpak update${NC}             Update gitpak to the latest version"
     echo -e "  ${YELLOW}gitpak search <package>${NC}   Search for a package in the public register"
+    echo -e "  ${YELLOW}gitpak uninstall <package>${NC} Uninstall a package (with confirmation)"
+    echo -e "    ${YELLOW}gitpak uninstall gitpak${NC}   Uninstall gitpak itself (with confirmation)"
 }
+
 
 install_package() {
     repo_url="$1"
