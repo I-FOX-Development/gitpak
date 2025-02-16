@@ -102,16 +102,28 @@ run_package() {
         exit 1
     fi
     
+    # Check for the main file based on the operating system
     if [ "$os" == "Linux" ]; then
-        exec "$package_path/index.sh" "$@"
+        main_file="$package_path/index.sh"
     elif [ "$os" == "Darwin" ]; then
-        exec "$package_path/index-mac.sh" "$@"
+        main_file="$package_path/index-mac.sh"
     elif [[ "$os" == MINGW* || "$os" == CYGWIN* ]]; then
-        cmd.exe /c "$package_path/index-win.bat" "$@"
+        main_file="$package_path/index-win.bat"
     else
         echo -e "${RED}Unsupported OS${NC}"
+        exit 1
     fi
+
+    # Check if the main file exists
+    if [ ! -f "$main_file" ]; then
+        echo -e "${RED}The package '$package_name' is invalid ($main_file not found).${NC}"
+        exit 1
+    fi
+    
+    # Execute the main file if it exists
+    exec "$main_file" "$@"
 }
+
 
 create_project() {
     project_name="$1"
