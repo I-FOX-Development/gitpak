@@ -47,6 +47,16 @@ install_package() {
         fi
     done
     echo -e "\n${GREEN}Installed $package_name to $package_path${NC}"
+    
+    # Get the package name from info.json
+    info_file="$package_path/info.json"
+    if [ -f "$info_file" ]; then
+        new_name=$(jq -r .name "$info_file")
+        if [ "$new_name" != "$package_name" ]; then
+            mv "$package_path" "$INSTALL_DIR/$new_name"
+            echo -e "${GREEN}Renamed package to '$new_name'.${NC}"
+        fi
+    fi
 }
 
 add_to_path() {
