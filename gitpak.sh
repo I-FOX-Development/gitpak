@@ -59,6 +59,28 @@ install_package() {
     fi
 }
 
+uninstall_package() {
+    package_name="$1"
+    package_path="$INSTALL_DIR/$package_name"
+
+    # Check if the package exists
+    if [ ! -d "$package_path" ]; then
+        echo -e "${RED}Error: Package '$package_name' is not installed.${NC}"
+        exit 1
+    fi
+
+    # Remove package directory
+    rm -rf "$package_path"
+    echo -e "${GREEN}Uninstalled package '$package_name'${NC}"
+
+    # Remove package from PATH in .bashrc and .zshrc
+    sed -i "/$package_path/d" ~/.bashrc
+    sed -i "/$package_path/d" ~/.zshrc
+    source ~/.bashrc
+    source ~/.zshrc
+    echo -e "${GREEN}Removed '$package_name' from PATH${NC}"
+}
+
 add_to_path() {
     package_name="$1"
     package_path="$INSTALL_DIR/$package_name"
@@ -192,5 +214,6 @@ case "$1" in
     project) shift; [ "$1" == "new" ] && create_project "$2" ;;
     update) update_gitpak ;;
     search) search_package "$2" ;;
+    uninstall) uninstall_package "$2" ;;  # Add this line for uninstall command
     *) show_help ;;
 esac
